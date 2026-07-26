@@ -3,7 +3,35 @@
 #include "scheduler/pcb.h"
 #include "scheduler/fcfs.h"
 #include "scheduler/scheduler.h"
+#include "memory/memory.h"
+#include "memory/mem_statistics.h"
+#include "memory/page_table.h"
+#include "memory/tlb.h"
+#include "memory/replacement.h"
+#include "memory/mem_statistics.h"
 
+
+void initMemorySystem(){
+   generateBackingStore(); 
+   //invalidateTLBEntry();
+   initMemory();
+   initPageTable();
+   initTLB();
+   initReplacement();
+   initStatistics();
+}
+
+
+void translateAddresses(void){
+    printf("\nAddress trasnlation is not implemented yet\n");
+    printf("Later this fucntion will:\n");
+    printf("- Read addresses.txt\n");
+    printf("- Check TLB\n");
+    printf("- Check Page Table\n");
+    printf("- Handle Page Faults\n");
+    printf("- Load pages from BACKING_STORE.bin\n");
+    printf("- Display logical and physical addresses\n");
+}
 
 int main() {
     printf("Hello, World!\n");
@@ -61,9 +89,10 @@ int main() {
     roundRobin(processes_rr, 4, 2);
     */
 
-    int n, choice, quantum;
+    // int n, choice /*, quantum*/ ;
+    int choice;
 
-    printf("Enter number of processes: ");
+    /*printf("Enter number of processes: ");
     scanf("%d", &n);
 
     PCB processes[n];
@@ -136,8 +165,59 @@ int main() {
               printf("Invalid choice. Please try again.\n");
         }
 
+    }while(choice != 0); */
+ 
+    initMemorySystem();
+
+    do {
+       
+        printf("\n========================\n");
+        printf(" Virtual Memory Simulator");
+        printf("=========================\n");
+        printf("1. Translate Addresses\n");
+        printf("2. Display Page Table\n");
+        printf("3. Display TLB\n");
+        printf("4. Display Physical Memory\n");
+        printf("5. Show Statistics\n");
+        printf("6. Reset\n");
+        printf("0. Exit\n");
+
+        printf("\nChoice:");
+        scanf("%d", &choice);
+
+        switch(choice){
+            case 1:
+                  translateAddresses();
+                  break;
+            case 2:
+                displayPageTable();
+                break;
+            case 3:
+                displayTLB();
+                break;
+            case 4:
+                displayMemory();
+                break;
+            case 5:
+                displayStatistics();
+                break;
+            case 6:
+                initMemorySystem();
+                break;
+            case 0:
+                printf("Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+         
+        }
+
+
+
+
     }while(choice != 0);
- 
- 
+
+
+
     return 0;
 }
