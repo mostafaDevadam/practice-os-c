@@ -21,7 +21,7 @@ $(BUILD_DIR)/utils.o $(BUILD_DIR)/sleeping_barber.o $(BUILD_DIR)/readers_writers
 $(BUILD_DIR)/dining_philosophers.o \
 $(BUILD_DIR)/banker.o $(BUILD_DIR)/utils_d.o $(BUILD_DIR)/avoidance.o $(BUILD_DIR)/detection.o $(BUILD_DIR)/display.o $(BUILD_DIR)/input.o $(BUILD_DIR)/prevention.o \
 $(BUILD_DIR)/m_pcb.o $(BUILD_DIR)/m_cpu.o $(BUILD_DIR)/m_scheduler.o $(BUILD_DIR)/m_utils.o $(BUILD_DIR)/m_input.o $(BUILD_DIR)/m_queue.o \
-$(BUILD_DIR)/m_fcfs.o $(BUILD_DIR)/m_sjf.o
+$(BUILD_DIR)/m_fcfs.o $(BUILD_DIR)/m_sjf.o  $(BUILD_DIR)/m_round_robin.o $(BUILD_DIR)/m_priority.o
 # Default target to build the project
 all: $(BUILD_DIR) $(TARGET)
 
@@ -36,7 +36,8 @@ $(CONCURRENCY)/utils.h $(CONCURRENCY)/sleeping_barber.h $(CONCURRENCY)/readers_w
 $(CONCURRENCY)/dining_philosophers.h \
 $(DEADLOCK)/banker.h $(DEADLOCK)/utils_d.h $(DEADLOCK)/avoidance.h $(DEADLOCK)/detection.h $(DEADLOCK)/display.h $(DEADLOCK)/input.h $(DEADLOCK)/prevention.h \
 $(MULTI_CPU_SCHEDULER)/m_pcb.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_scheduler.h $(MULTI_CPU_SCHEDULER)/m_utils.h \
-$(MULTI_CPU_SCHEDULER)/m_input.h $(MULTI_CPU_SCHEDULER)/m_queue.h $(MULTI_CPU_SCHEDULER)/m_fcfs.h $(MULTI_CPU_SCHEDULER)/m_sjf.h 
+$(MULTI_CPU_SCHEDULER)/m_input.h $(MULTI_CPU_SCHEDULER)/m_queue.h $(MULTI_CPU_SCHEDULER)/m_fcfs.h $(MULTI_CPU_SCHEDULER)/m_sjf.h \
+ $(MULTI_CPU_SCHEDULER)/m_round_robin.h $(MULTI_CPU_SCHEDULER)/m_priority.h
 	$(CC) $(CFLAGS) -c main.c -o $(BUILD_DIR)/main.o 
 
 # Compile ic.c (depends on ic.h)
@@ -164,6 +165,14 @@ $(BUILD_DIR)/m_fcfs.o: $(MULTI_CPU_SCHEDULER)/m_fcfs.c $(MULTI_CPU_SCHEDULER)/m_
 
 $(BUILD_DIR)/m_sjf.o: $(MULTI_CPU_SCHEDULER)/m_sjf.c $(MULTI_CPU_SCHEDULER)/m_sjf.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_pcb.h  $(SCHEDULER)/pcb.h
 	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_sjf.c -o $(BUILD_DIR)/m_sjf.o
+
+
+$(BUILD_DIR)/m_round_robin.o: $(MULTI_CPU_SCHEDULER)/m_round_robin.c $(MULTI_CPU_SCHEDULER)/m_round_robin.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_pcb.h  $(SCHEDULER)/pcb.h
+	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_round_robin.c -o $(BUILD_DIR)/m_round_robin.o
+
+
+$(BUILD_DIR)/m_priority.o: $(MULTI_CPU_SCHEDULER)/m_priority.c $(MULTI_CPU_SCHEDULER)/m_priority.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_pcb.h  $(SCHEDULER)/pcb.h
+	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_priority.c -o $(BUILD_DIR)/m_priority.o
 
 
 #
