@@ -24,7 +24,8 @@
 #include "multi_cpu_scheduler/m_scheduler.h"
 #include "multi_cpu_scheduler/m_pcb.h"
 #include "multi_cpu_scheduler/m_cpu.h"
-
+#include "multi_cpu_scheduler/m_utils.h"
+#include "multi_cpu_scheduler/m_input.h"
 
 void initMemorySystem()
 {
@@ -49,59 +50,59 @@ void translateAddresses(void)
     printf("- Display logical and physical addresses\n");
 }
 
+void demo_scheduler()
+{
+    /*
+   // pcb
+   PCB p1;
+   initializePCB(&p1, 1, 0, 5, 1);
+   p1.state = READY;
+   printPCB(&p1);
 
-void demo_scheduler(){
-     /*
-    // pcb
-    PCB p1;
-    initializePCB(&p1, 1, 0, 5, 1);
-    p1.state = READY;
-    printPCB(&p1);
+   // fcfs
+   PCB processes[] = {
+       {1, 0, 5, 5, 1, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
+       {2, 2, 3, 3, 2, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
+       {3, 4, 2, 2, 3, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
+       {4, 6, 4, 4, 4, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL}
 
-    // fcfs
-    PCB processes[] = {
-        {1, 0, 5, 5, 1, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
-        {2, 2, 3, 3, 2, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
-        {3, 4, 2, 2, 3, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL},
-        {4, 6, 4, 4, 4, 0, 0, {0}, NEW, -1, -1, -1, -1, -1, NULL}
+   };
+   int n = sizeof(processes) / sizeof(processes[0]);
+   fcfs(processes, n);
 
-    };
-    int n = sizeof(processes) / sizeof(processes[0]);
-    fcfs(processes, n);
+   // sjf
+   PCB processes_sjf[4];
+   initializePCB(&processes_sjf[0], 1, 0, 8, 2);
+   initializePCB(&processes_sjf[1], 2, 1, 4, 1);
+   initializePCB(&processes_sjf[2], 3, 2, 9, 3);
+   initializePCB(&processes_sjf[3], 4, 3, 5, 2);
+   int n_ = 4;
+   sjf(processes_sjf, n_);
 
-    // sjf
-    PCB processes_sjf[4];
-    initializePCB(&processes_sjf[0], 1, 0, 8, 2);
-    initializePCB(&processes_sjf[1], 2, 1, 4, 1);
-    initializePCB(&processes_sjf[2], 3, 2, 9, 3);
-    initializePCB(&processes_sjf[3], 4, 3, 5, 2);
-    int n_ = 4;
-    sjf(processes_sjf, n_);
+   // srtf
+   PCB processes_srtf[4];
+   initializePCB(&processes_srtf[0], 1, 0, 8, 2);
+   initializePCB(&processes_srtf[1], 2, 1, 4, 1);
+   initializePCB(&processes_srtf[2], 3, 2, 9, 3);
+   initializePCB(&processes_srtf[3], 4, 3, 5, 2);
+   srtf(processes_srtf, 4);
 
-    // srtf
-    PCB processes_srtf[4];
-    initializePCB(&processes_srtf[0], 1, 0, 8, 2);
-    initializePCB(&processes_srtf[1], 2, 1, 4, 1);
-    initializePCB(&processes_srtf[2], 3, 2, 9, 3);
-    initializePCB(&processes_srtf[3], 4, 3, 5, 2);
-    srtf(processes_srtf, 4);
+   // priority
+   PCB processes_pr[4];
+   initializePCB(&processes_pr[0], 1, 0, 8, 2);
+   initializePCB(&processes_pr[1], 2, 1, 4, 1);
+   initializePCB(&processes_pr[2], 3, 2, 9, 3);
+   initializePCB(&processes_pr[3], 4, 3, 5, 2);
+   priorityScheduling(processes_pr, 4);
 
-    // priority
-    PCB processes_pr[4];
-    initializePCB(&processes_pr[0], 1, 0, 8, 2);
-    initializePCB(&processes_pr[1], 2, 1, 4, 1);
-    initializePCB(&processes_pr[2], 3, 2, 9, 3);
-    initializePCB(&processes_pr[3], 4, 3, 5, 2);
-    priorityScheduling(processes_pr, 4);
-
-    // round robin
-    PCB processes_rr[4];
-    initializePCB(&processes_rr[0], 1, 0, 8, 2);
-    initializePCB(&processes_rr[1], 2, 1, 4, 1);
-    initializePCB(&processes_rr[2], 3, 2, 9, 3);
-    initializePCB(&processes_rr[3], 4, 3, 5, 2);
-    roundRobin(processes_rr, 4, 2);
-    */
+   // round robin
+   PCB processes_rr[4];
+   initializePCB(&processes_rr[0], 1, 0, 8, 2);
+   initializePCB(&processes_rr[1], 2, 1, 4, 1);
+   initializePCB(&processes_rr[2], 3, 2, 9, 3);
+   initializePCB(&processes_rr[3], 4, 3, 5, 2);
+   roundRobin(processes_rr, 4, 2);
+   */
 }
 void shell_scheduler()
 {
@@ -235,8 +236,8 @@ void shell_memory()
     } while (choice != 0);
 }
 
-
-void displayConcurrencyMenu(){
+void displayConcurrencyMenu()
+{
     printf("\n");
     printf("=================================\n");
     printf("   OS Concurrency Simulator\n");
@@ -249,69 +250,65 @@ void displayConcurrencyMenu(){
     printf("=================================\n");
     printf("Enter your choice: ");
 }
-void shell_concurrency(){
+void shell_concurrency()
+{
     int choice;
 
     initRandom();
 
-    while(1){
+    while (1)
+    {
         displayConcurrencyMenu();
 
-        if(scanf("%d", &choice) != 1){
+        if (scanf("%d", &choice) != 1)
+        {
             printf("Invalid input. Please try again.\n");
-            while(getchar() != '\n');
+            while (getchar() != '\n')
+                ;
             continue;
         }
 
-        switch(choice){
-            case 1:
-              printf("\n-----Producer-Consumer \n");
-              producerConsumer();
-              break;
+        switch (choice)
+        {
+        case 1:
+            printf("\n-----Producer-Consumer \n");
+            producerConsumer();
+            break;
 
-            case 2:
-              printf("\n-----Dining Philosophers \n");
-              diningPhilosophers();
-              break;
+        case 2:
+            printf("\n-----Dining Philosophers \n");
+            diningPhilosophers();
+            break;
 
-            case 3:
-              printf("\n-----Readers-Writers \n");
-              readersWriters();
-              break;
+        case 3:
+            printf("\n-----Readers-Writers \n");
+            readersWriters();
+            break;
 
-            case 4:
-              printf("\n-----Sleeping Barber \n");
-              sleepingBarber();
-              break;
+        case 4:
+            printf("\n-----Sleeping Barber \n");
+            sleepingBarber();
+            break;
 
-            case 5:
-                 destroyUtils();
-                 printf("Goodbye!\n");
-                 //exit(0);
-                 break;
+        case 5:
+            destroyUtils();
+            printf("Goodbye!\n");
+            // exit(0);
+            break;
 
-            default:
-                printf("Invalid choice. Please try again.\n");
-                break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+            break;
         }
 
         printf("\nPress Enter to continue...");
-        //while(getchar() != '\n');
-        //getchar();
+        // while(getchar() != '\n');
+        // getchar();
     }
-
-
-
-
-
-
 }
 
-
-
-
-
-void shell_deadlock(){
+void shell_deadlock()
+{
     SystemState sys = {0};
 
     int choice;
@@ -319,7 +316,8 @@ void shell_deadlock(){
 
     int process;
 
-    while(1){
+    while (1)
+    {
 
         printf("\n=============================\n");
         printf(" Deadlock Management System\n");
@@ -337,129 +335,167 @@ void shell_deadlock(){
         printf("Choice: ");
         scanf("%d", &choice);
 
-        switch(choice){
-            case 1:
-                inputSystemState(&sys);
-                initialized = 1;
-               
-                break;
-            case 2:
-                if(initialized){
-                    displaySystemState(&sys);
-                }else{
-                    printf("Enter system data first.\n");
-                }
-               
-                break;
-            case 3:
-                if(initialized){
-                   
-                    
+        switch (choice)
+        {
+        case 1:
+            inputSystemState(&sys);
+            initialized = 1;
 
-                    calculateNeed(&sys);
+            break;
+        case 2:
+            if (initialized)
+            {
+                displaySystemState(&sys);
+            }
+            else
+            {
+                printf("Enter system data first.\n");
+            }
 
-                    printf("calculateNeed finished\n");
-                   
-                }else{
-                    printf("Enter system data first.\n");
-                }
-                
-                break;
-           case 4:
-            if(initialized){
-                  int sequence[MAX_PROCESS];
-                  if(avoidDeadlock(&sys, sequence)){
-                      printf("Safe State.\n");
-                      printSafeSequence_d(sequence, sys.processes);
-                  }else{
-                      printf("System is not safe.\n");
-                  }
-                }
-                
-                break;
-             case 5:
-                
-                int request[MAX_RESOURCE];
+            break;
+        case 3:
+            if (initialized)
+            {
 
-                printf("Enter process number:");
-                scanf("%d", &process);
+                calculateNeed(&sys);
 
-                printf("Enter resource request:\n");
+                printf("calculateNeed finished\n");
+            }
+            else
+            {
+                printf("Enter system data first.\n");
+            }
 
-                for (int i = 0; i < sys.resources; i++)
+            break;
+        case 4:
+            if (initialized)
+            {
+                int sequence[MAX_PROCESS];
+                if (avoidDeadlock(&sys, sequence))
                 {
-                    printf("R%d: ", i);
-                    scanf("%d", &request[i]);
+                    printf("Safe State.\n");
+                    printSafeSequence_d(sequence, sys.processes);
                 }
-                avoidRequest(&sys, process, request);
-                break;
-            case 6:
-                 int deadlocked[MAX_PROCESS];
-                 int count = detectDeadlock(&sys, deadlocked);
-                 printDeadlockProcesses(deadlocked, count);
-                break;
-            case 7:
-                 
+                else
+                {
+                    printf("System is not safe.\n");
+                }
+            }
 
-                  printf("Enter process number:");
-                  scanf("%d", &process);
+            break;
+        case 5:
 
-                  printf("Enter request:\n");
+            int request[MAX_RESOURCE];
 
-                  for(int i = 0; i < sys.resources; i++){
-                      scanf("%d", &request[i]);
-                  }
+            printf("Enter process number:");
+            scanf("%d", &process);
 
-                  preventRequest(&sys, process, request);
+            printf("Enter resource request:\n");
 
-                  break;
-            
-            case 8:
-                printf("Enter process number:");
-                scanf("%d", &process);
+            for (int i = 0; i < sys.resources; i++)
+            {
+                printf("R%d: ", i);
+                scanf("%d", &request[i]);
+            }
+            avoidRequest(&sys, process, request);
+            break;
+        case 6:
+            int deadlocked[MAX_PROCESS];
+            int count = detectDeadlock(&sys, deadlocked);
+            printDeadlockProcesses(deadlocked, count);
+            break;
+        case 7:
 
-                releaseResources_d(&sys, process);
-                resetProcessOrder(process);
+            printf("Enter process number:");
+            scanf("%d", &process);
 
-                break;
+            printf("Enter request:\n");
 
-            case 9:
-                 printf("Existing...\n");
-                break;
+            for (int i = 0; i < sys.resources; i++)
+            {
+                scanf("%d", &request[i]);
+            }
 
-            default:
-                printf("Invalid choice. Please try again.\n");
-                break;
+            preventRequest(&sys, process, request);
+
+            break;
+
+        case 8:
+            printf("Enter process number:");
+            scanf("%d", &process);
+
+            releaseResources_d(&sys, process);
+            resetProcessOrder(process);
+
+            break;
+
+        case 9:
+            printf("Existing...\n");
+            break;
+
+        default:
+            printf("Invalid choice. Please try again.\n");
+            break;
         }
-
     }
 }
 
+void run_multi_cpu_scheduler()
+{
 
+    printf("run_multi_cpu_scheduler\n");
 
+    int n = 5;
 
+    M_PCB processes[5] =
+        {
+        
+            {1, 0, 5, 5, 2, 0, 0, 0, -1, READY, -1},
+            {2, 1, 3, 3, 1, 0, 0, 0, -1, READY, -1},
+            {3, 2, 8, 8, 3, 0, 0, 0, -1, READY, -1},
+            {4, 3, 4, 4, 2, 0, 0, 0, -1, READY, -1},
+            {5, 5, 2, 2, 1, 0, 0, 0, -1, READY, -1}
+        };
 
-void run_multi_cpu_scheduler(){
+    
 
-    M_PCB processes[] = {
-            {1,0,5,5,2},
-            {2,1,3,3,1},
-            {3,2,8,8,3},
-            {4,3,4,4,2}
-    };
-
-    int n = 4;
+   
 
     CPU cpus[2];
 
     initializeCPUs(cpus, 2);
 
-     
+    /* for (int i = 0; i < n; i++)
+    {
+        const char *s_ = get_state(processes[i]);
+        printf("process before i: %d, state: %s \n", processes[i].pid, s_);
+
+        if(i <= 2){
+             printf("cpu id: %d, busy: %d \n", cpus[i].id, cpus[i].busy);
+        }
+
+         printf("process after i: %d, state: %s \n", processes[i].pid, s_);
+       
+    }*/
+
+
+    schedule(processes, n, cpus, 2);
+
+
     
 
 
-}
 
+    printProcessTable(processes, n);
+
+    printCPUStatus(cpus, 2);
+
+    for (int i = 0; i < n; i++)
+    {
+        //printf("i: %d\n", i);
+        m_printPCB(processes[i]);
+    }
+}
 
 int main()
 {
@@ -467,7 +503,5 @@ int main()
 
     run_multi_cpu_scheduler();
 
-   
-    
     return 0;
 }
