@@ -2,10 +2,14 @@
 #include "m_scheduler.h"
 #include "m_fcfs.h"
 #include "m_sjf.h"
+#include "m_round_robin.h"
+#include "m_priority.h"
+
 
 #define FCFS 1
 #define SJF 2
 #define RR 3
+#define PRIORITY 4
 
 void schedule_all(M_PCB processes[], int n, CPU cpus[], int cpuCount){
 
@@ -15,6 +19,7 @@ void schedule_all(M_PCB processes[], int n, CPU cpus[], int cpuCount){
     printf("1. FCFS\n");
     printf("2. SJF\n");
     printf("3. Round Robin\n");
+    printf("4. Priority\n");
     printf("Choice: ");
     scanf("%d", &algorithm);
 
@@ -25,9 +30,16 @@ void schedule_all(M_PCB processes[], int n, CPU cpus[], int cpuCount){
 
         case RR: 
            {
-              printf("coming soon \n");
+              int quantum;
+              printf("Quantum: ");
+              scanf("%d", &quantum);
+              roundRobinSchedule(processes, n, cpus, cpuCount, quantum);
               break;
            }
+
+        case PRIORITY: prioritySchedule(processes, n, cpus, cpuCount); break;
+
+
 
 
         default:
