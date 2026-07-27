@@ -445,9 +445,9 @@ void run_multi_cpu_scheduler()
 
     printf("run_multi_cpu_scheduler\n");
 
-    int n = 5;
+    //int n = 5;
 
-    M_PCB processes[5] =
+    /*M_PCB processes[5] =
         {
         
             {1, 0, 5, 5, 2, 0, 0, 0, -1, READY, -1},
@@ -455,36 +455,29 @@ void run_multi_cpu_scheduler()
             {3, 2, 8, 8, 3, 0, 0, 0, -1, READY, -1},
             {4, 3, 4, 4, 2, 0, 0, 0, -1, READY, -1},
             {5, 5, 2, 2, 1, 0, 0, 0, -1, READY, -1}
-        };
+        };*/
 
-    
+    M_PCB processes[MAX_PROCESSES];
+    int cpuCount;
+    int n = loadProcesses("multi_cpu_scheduler/processes.txt", processes, &cpuCount);
 
-   
+    if(n == -1){
+        return;
+    }
 
-    CPU cpus[2];
+    CPU cpus[MAX_CPU];
 
-    initializeCPUs(cpus, 2);
+    initializeCPUs(cpus, cpuCount);
+    //schedule(processes, n, cpus, cpuCount);
 
-    /* for (int i = 0; i < n; i++)
-    {
-        const char *s_ = get_state(processes[i]);
-        printf("process before i: %d, state: %s \n", processes[i].pid, s_);
-
-        if(i <= 2){
-             printf("cpu id: %d, busy: %d \n", cpus[i].id, cpus[i].busy);
-        }
-
-         printf("process after i: %d, state: %s \n", processes[i].pid, s_);
-       
-    }*/
+    printf("processes = %p\n", (void *)processes);
+    printf("n = %d\n", n);
+    printf("cpuCount = %d\n", cpuCount);
 
 
-    schedule(processes, n, cpus, 2);
+    //schedule_fcfs(processes, n, cpus, cpuCount);
 
-
-    
-
-
+    schedule_all(processes, n, cpus, cpuCount);
 
     printProcessTable(processes, n);
 
@@ -492,7 +485,6 @@ void run_multi_cpu_scheduler()
 
     for (int i = 0; i < n; i++)
     {
-        //printf("i: %d\n", i);
         m_printPCB(processes[i]);
     }
 }

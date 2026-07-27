@@ -1,5 +1,50 @@
 #include <stdio.h>
 #include "m_scheduler.h"
+#include "m_fcfs.h"
+#include "m_sjf.h"
+
+#define FCFS 1
+#define SJF 2
+#define RR 3
+
+void schedule_all(M_PCB processes[], int n, CPU cpus[], int cpuCount){
+
+    int algorithm;
+
+     printf("Scheduling Algorithms\n");
+    printf("1. FCFS\n");
+    printf("2. SJF\n");
+    printf("3. Round Robin\n");
+    printf("Choice: ");
+    scanf("%d", &algorithm);
+
+    switch(algorithm){
+
+        case FCFS: fcfsSchedule(processes, n, cpus, cpuCount); break;
+        case SJF: sjfSchedule(processes, n, cpus, cpuCount); break;
+
+        case RR: 
+           {
+              printf("coming soon \n");
+              break;
+           }
+
+
+        default:
+               printf("Invalid choice");
+               
+
+    }
+
+}
+void schedule_fcfs(M_PCB processes[], int n, CPU cpus[], int cpuCount){
+    printf("1\n");
+
+    fcfsSchedule(processes, n, cpus, cpuCount);
+
+    printf("2\n");
+}
+
 
 void schedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
 {

@@ -5,7 +5,7 @@
 #include "m_pcb.h"
 
 #define MAX_PROCESSES 100
-#define MAX_CPU 5
+//#define MAX_CPU 5
 
 int loadProcesses(const char *filename, M_PCB processes[], int *cpuCount);
 

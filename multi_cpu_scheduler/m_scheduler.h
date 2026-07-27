@@ -5,6 +5,7 @@
 #include "m_cpu.h"
 
 void schedule(M_PCB processes[], int n, CPU cpus[], int cpuCount);
+void schedule_fcfs(M_PCB processes[], int n, CPU cpus[], int cpuCount);
 
-
+void schedule_all(M_PCB processes[], int n, CPU cpus[], int cpuCount);
 #endif

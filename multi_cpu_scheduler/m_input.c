@@ -23,7 +23,7 @@ int loadProcesses(const char *filename, M_PCB processes[], int *cpuCount){
     }
 
 
-    if(fscanf(fp. "%d", &n) != 1){
+    if(fscanf(fp, "%d", &n) != 1){
         fclose(fp);
         return -1;
     }
