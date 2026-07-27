@@ -5,7 +5,9 @@ BUILD_DIR = build
 SRC = src
 SCHEDULER = scheduler
 MEMORY = memory
-
+CONCURRENCY = concurrency
+DEADLOCK = deadlock
+MULTI_CPU_SCHEDULER = multi_cpu_scheduler
 
 # Target executable name
 TARGET = $(BUILD_DIR)/main
@@ -14,8 +16,11 @@ TARGET = $(BUILD_DIR)/main
 OBJ = $(BUILD_DIR)/main.o $(BUILD_DIR)/shell.o $(BUILD_DIR)/pcb.o $(BUILD_DIR)/fcfs.o  $(BUILD_DIR)/sjf.o $(BUILD_DIR)/srtf.o $(BUILD_DIR)/priority.o \
 $(BUILD_DIR)/round_robin.o $(BUILD_DIR)/gantt.o \
 $(BUILD_DIR)/memory.o $(BUILD_DIR)/backing_store.o $(BUILD_DIR)/page_table.o \
-$(BUILD_DIR)/tlb.o $(BUILD_DIR)/replacement.o $(BUILD_DIR)/mem_statistics.o
-
+$(BUILD_DIR)/tlb.o $(BUILD_DIR)/replacement.o $(BUILD_DIR)/mem_statistics.o \
+$(BUILD_DIR)/utils.o $(BUILD_DIR)/sleeping_barber.o $(BUILD_DIR)/readers_writers.o $(BUILD_DIR)/producer_consumer.o \
+$(BUILD_DIR)/dining_philosophers.o \
+$(BUILD_DIR)/banker.o $(BUILD_DIR)/utils_d.o $(BUILD_DIR)/avoidance.o $(BUILD_DIR)/detection.o $(BUILD_DIR)/display.o $(BUILD_DIR)/input.o $(BUILD_DIR)/prevention.o \
+$(BUILD_DIR)/m_pcb.o $(BUILD_DIR)/m_cpu.o $(BUILD_DIR)/m_scheduler.o
 # Default target to build the project
 all: $(TARGET)
 
@@ -25,7 +30,11 @@ $(TARGET): $(OBJ)
 
 # Compile main.c (depends on ic.h because it includes it)
 $(BUILD_DIR)/main.o: main.c $(SRC)/shell.h $(SCHEDULER)/pcb.h $(SCHEDULER)/fcfs.h $(SCHEDULER)/scheduler.h  \
-$(MEMORY)/memory.h $(MEMORY)/page_table.h $(MEMORY)/tlb.h  $(MEMORY)/replacement.h  $(MEMORY)/mem_statistics.h  
+$(MEMORY)/memory.h $(MEMORY)/page_table.h $(MEMORY)/tlb.h  $(MEMORY)/replacement.h  $(MEMORY)/mem_statistics.h  \
+$(CONCURRENCY)/utils.h $(CONCURRENCY)/sleeping_barber.h $(CONCURRENCY)/readers_writers.h  $(CONCURRENCY)/producer_consumer.h  \
+$(CONCURRENCY)/dining_philosophers.h \
+$(DEADLOCK)/banker.h $(DEADLOCK)/utils_d.h $(DEADLOCK)/avoidance.h $(DEADLOCK)/detection.h $(DEADLOCK)/display.h $(DEADLOCK)/input.h $(DEADLOCK)/prevention.h \
+$(MULTI_CPU_SCHEDULER)/m_pcb.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_scheduler.h
 	$(CC) $(CFLAGS) -c main.c -o $(BUILD_DIR)/main.o 
 
 # Compile ic.c (depends on ic.h)
@@ -78,6 +87,62 @@ $(BUILD_DIR)/replacement.o: $(MEMORY)/replacement.c $(MEMORY)/replacement.h
 $(BUILD_DIR)/mem_statistics.o: $(MEMORY)/mem_statistics.c $(MEMORY)/mem_statistics.h 
 	$(CC) $(CFLAGS) -c $(MEMORY)/mem_statistics.c -o $(BUILD_DIR)/mem_statistics.o
 
+# concurrency
+$(BUILD_DIR)/utils.o: $(CONCURRENCY)/utils.c $(CONCURRENCY)/utils.h 
+	$(CC) $(CFLAGS) -c $(CONCURRENCY)/utils.c -o $(BUILD_DIR)/utils.o
+
+$(BUILD_DIR)/sleeping_barber.o: $(CONCURRENCY)/sleeping_barber.c $(CONCURRENCY)/sleeping_barber.h 
+	$(CC) $(CFLAGS) -c $(CONCURRENCY)/sleeping_barber.c -o $(BUILD_DIR)/sleeping_barber.o
+
+$(BUILD_DIR)/readers_writers.o: $(CONCURRENCY)/readers_writers.c $(CONCURRENCY)/readers_writers.h 
+	$(CC) $(CFLAGS) -c $(CONCURRENCY)/readers_writers.c -o $(BUILD_DIR)/readers_writers.o
+
+$(BUILD_DIR)/producer_consumer.o: $(CONCURRENCY)/producer_consumer.c $(CONCURRENCY)/producer_consumer.h 
+	$(CC) $(CFLAGS) -c $(CONCURRENCY)/producer_consumer.c -o $(BUILD_DIR)/producer_consumer.o
+
+$(BUILD_DIR)/dining_philosophers.o: $(CONCURRENCY)/dining_philosophers.c $(CONCURRENCY)/dining_philosophers.h 
+	$(CC) $(CFLAGS) -c $(CONCURRENCY)/dining_philosophers.c -o $(BUILD_DIR)/dining_philosophers.o
+
+#deadlock
+
+$(BUILD_DIR)/banker.o: $(DEADLOCK)/banker.c $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/banker.c -o $(BUILD_DIR)/banker.o
+
+
+$(BUILD_DIR)/utils_d.o: $(DEADLOCK)/utils_d.c $(DEADLOCK)/utils_d.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/utils_d.c -o $(BUILD_DIR)/utils_d.o
+
+
+$(BUILD_DIR)/avoidance.o: $(DEADLOCK)/avoidance.c $(DEADLOCK)/avoidance.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/avoidance.c -o $(BUILD_DIR)/avoidance.o
+
+
+$(BUILD_DIR)/detection.o: $(DEADLOCK)/detection.c $(DEADLOCK)/detection.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/detection.c -o $(BUILD_DIR)/detection.o
+
+
+$(BUILD_DIR)/display.o: $(DEADLOCK)/display.c $(DEADLOCK)/display.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/display.c -o $(BUILD_DIR)/display.o
+
+
+$(BUILD_DIR)/input.o: $(DEADLOCK)/input.c $(DEADLOCK)/input.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/input.c -o $(BUILD_DIR)/input.o
+
+
+$(BUILD_DIR)/prevention.o: $(DEADLOCK)/prevention.c $(DEADLOCK)/prevention.h $(DEADLOCK)/banker.h 
+	$(CC) $(CFLAGS) -c $(DEADLOCK)/prevention.c -o $(BUILD_DIR)/prevention.o
+
+# multi_cpu_scheduler
+$(BUILD_DIR)/m_pcb.o: $(MULTI_CPU_SCHEDULER)/m_pcb.c $(MULTI_CPU_SCHEDULER)/m_pcb.h
+	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_pcb.c -o $(BUILD_DIR)/m_pcb.o
+
+$(BUILD_DIR)/m_cpu.o: $(MULTI_CPU_SCHEDULER)/m_cpu.c $(MULTI_CPU_SCHEDULER)/m_cpu.h $(DEADLOCK)/m_pcb.h 
+	$(CC) $(CFLAGS) -c $(DEADMULTI_CPU_SCHEDULERLOCK)/m_cpu.c -o $(BUILD_DIR)/m_cpu.o
+
+$(BUILD_DIR)/m_scheduler.o: $(MULTI_CPU_SCHEDULER)/m_scheduler.c $(MULTI_CPU_SCHEDULER)/m_scheduler.h $(MULTI_CPU_SCHEDULER)/m_pcb.h 
+	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_scheduler.c -o $(BUILD_DIR)/m_scheduler.o
+
+
 #
 run: $(TARGET)
 	./$(TARGET)
@@ -88,7 +153,7 @@ $(BUILD_DIR):
 
 # Clean up build files
 clean:
-	rm -f $(OBJ) $(TARGET) $(BUILD_DIR) $(MEMORY)/*.o  *.exe 
+	rm -f $(OBJ) $(TARGET) $(BUILD_DIR) $(CONCURRENCY)/*o $(MEMORY)/*.o  *.exe 
 
 
 .PHONY: all run clean
