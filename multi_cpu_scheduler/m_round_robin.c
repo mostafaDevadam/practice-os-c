@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include "m_queue.h"
 #include "m_round_robin.h"
+#include "m_gantt.h"
+#include "m_statistics.h"
 
-void roundRobinSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount, int quantum){
+void roundRobinSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount, int quantum)
+{
 
     Queue readyQueue;
     initQueue(&readyQueue);
@@ -10,81 +13,105 @@ void roundRobinSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount, int 
     int completed = 0;
     int time = 0;
 
-    int slice[MAX_CPU] = {0};
+    initGantt_m();
 
-    while(completed < n){
+    int slice[MAX_CPU] = {0};
+    int sliceStart[MAX_CPU] = {0};
+
+    while (completed < n)
+    {
 
         // New arrivals
-        for(int i = 0; i < n; i++){
-            if(processes[i].arrivalTime == time){
+        for (int i = 0; i < n; i++)
+        {
+            if (processes[i].arrivalTime == time)
+            {
                 enqueue(&readyQueue, &processes[i]);
                 processes[i].state = READY;
             }
         }
 
-
         // Assign idle CPUs
-        for(int c =0; c < cpuCount; c++){
-            if(!cpus[c].busy && !isEmpty(&readyQueue)){
+        for (int c = 0; c < cpuCount; c++)
+        {
+            if (!cpus[c].busy && !isEmpty(&readyQueue))
+            {
                 M_PCB *p = dequeue(&readyQueue);
 
                 cpus[c].busy = 1;
                 cpus[c].process = p;
+                // cpus[c].process->startTime = time;
 
                 slice[c] = 0;
+                sliceStart[c] = time;
 
-                if(p->responseTime == -1){
+                if (p->responseTime == -1)
+                {
                     p->responseTime = time - p->arrivalTime;
                 }
             }
         }
 
-
         // Execute
-        for(int c = 0; c < cpuCount; c++){
-                if(!cpus[c].busy){
-                    continue;
-                }
+        for (int c = 0; c < cpuCount; c++)
+        {
+            if (!cpus[c].busy)
+            {
+                continue;
+            }
 
-                M_PCB *p = cpus[c].process;
+            M_PCB *p = cpus[c].process;
 
-                p->remainingTime--;
-                slice[c]++;
+            p->remainingTime--;
+            slice[c]++;
 
-                // Process finished
-                if(p->remainingTime == 0){
-                    p->completionTime = time + 1;
-                    p->turnaroundTime = p->completionTime - p->arrivalTime;
-                    p->waitingTime = p->turnaroundTime - p->burstTime;
+            // Process finished
+            if (p->remainingTime == 0)
+            {
+                p->completionTime = time + 1;
+                p->turnaroundTime = p->completionTime - p->arrivalTime;
+                p->waitingTime = p->turnaroundTime - p->burstTime;
 
-                    p->state = TERMINATED;
+                p->state = TERMINATED;
 
-                    cpus[c].busy = 0;
-                    cpus[c].process = NULL;
+                addGanttChart_m(c,
+                                p->pid,
+                                sliceStart[c],
+                                time + 1);
 
-                    completed++;
-                 
-                }
-                // Quantum expired
-                else if(slice[c] == quantum){
-                     p->state = READY;
+                printf("Time %d : P%d finished on CPU %d\n",
+                       time + 1,
+                       p->pid,
+                       c);
 
-                     enqueue(&readyQueue, p);
+                cpus[c].busy = 0;
+                cpus[c].process = NULL;
 
-                     cpus[c].busy = 0;
-                     cpus[c].process = NULL;
+                slice[c] = 0;
 
-                     slice[c] = 0;
-                }
+                completed++;
+            }
+            // Quantum expired
+            else if (slice[c] == quantum)
+            {
+                addGanttChart_m(c,
+                                p->pid,
+                                sliceStart[c],
+                                time + 1);
 
+                p->state = READY;
+
+                enqueue(&readyQueue, p);
+
+                cpus[c].busy = 0;
+                cpus[c].process = NULL;
+
+                slice[c] = 0;
+            }
         }
-
-
-
 
         time++;
     }
-
 
     printf("\n=========================================\n");
     printf(" Round-Robin Scheduling Results\n");
@@ -105,5 +132,7 @@ void roundRobinSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount, int 
         );
     }
 
-
+    printGanttChart_m(cpuCount);
+    calculateStatistics_m(processes, n);
+   printStatistics_m(processes, n, cpuCount);
 }

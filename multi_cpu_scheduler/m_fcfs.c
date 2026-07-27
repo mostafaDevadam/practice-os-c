@@ -3,29 +3,24 @@
 #include <stdio.h>
 #include "m_fcfs.h"
 #include "m_queue.h"
+#include "m_gantt.h"
+#include "m_statistics.h"
 
 void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
 {
 
-   
-
     Queue readyQueue;
 
-    
-
     initQueue(&readyQueue);
-
-    
 
     int completed = 0;
     int time = 0;
 
-   
+    initGantt_m();
 
     while (completed < n)
     {
 
-        
         // Add newly arrived processes
         for (int i = 0; i < n; i++)
         {
@@ -36,7 +31,6 @@ void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
             }
         }
 
-       
         // Assign ready processes to idle CPUs
         for (int c = 0; c < cpuCount; c++)
         {
@@ -59,6 +53,7 @@ void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
 
                 p->state = RUNNING;
                 p->cpuID = c;
+                p->startTime = time;
 
                 if (p->responseTime == -1)
                 {
@@ -74,7 +69,6 @@ void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
             }
         }
 
-       
         // Execute one time unit
         for (int c = 0; c < cpuCount; c++)
         {
@@ -103,18 +97,17 @@ void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
                     cpus[c].process = NULL;
 
                     completed++;
+
+                    addGanttChart_m(c,
+                                    p->pid,
+                                    p->startTime,
+                                    time + 1);
                 }
             }
         }
 
-       
-
         time++;
-
-        
     }
-
-   
 
     printf("\n=========================================\n");
     printf(" FCFS Scheduling Results\n");
@@ -134,4 +127,8 @@ void fcfsSchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
 
         );
     }
+
+    printGanttChart_m(cpuCount);
+    calculateStatistics_m(processes, n);
+    printStatistics_m(processes, n, cpuCount);
 }

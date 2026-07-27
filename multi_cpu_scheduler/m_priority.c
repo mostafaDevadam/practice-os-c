@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include "m_priority.h"
+#include "m_gantt.h"
+#include "m_statistics.h"
 
 void prioritySchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
 {
 
     int completed = 0;
     int time = 0;
+
+    initGantt_m();
 
     while (completed < n)
     {
@@ -91,18 +95,23 @@ void prioritySchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
                 p->remainingTime--;
 
                 if (p->remainingTime == 0)
-                    {
-                      p->completionTime = time + 1;
-                      p->turnaroundTime = p->completionTime - p->arrivalTime;
-                      p->waitingTime = p->turnaroundTime - p->burstTime;
+                {
+                    p->completionTime = time + 1;
+                    p->turnaroundTime = p->completionTime - p->arrivalTime;
+                    p->waitingTime = p->turnaroundTime - p->burstTime;
 
-                      p->state = TERMINATED;
+                    p->state = TERMINATED;
 
-                      cpus[c].busy = 0;
-                      cpus[c].process = NULL;
+                    cpus[c].busy = 0;
+                    cpus[c].process = NULL;
 
-                      completed++;
-                    }
+                    completed++;
+
+                    addGanttChart_m(c,
+                                    p->pid,
+                                    p->startTime,
+                                    time + 1);
+                }
             }
         }
 
@@ -124,4 +133,8 @@ void prioritySchedule(M_PCB processes[], int n, CPU cpus[], int cpuCount)
                processes[i].waitingTime,
                processes[i].responseTime);
     }
+
+    printGanttChart_m(cpuCount);
+    calculateStatistics_m(processes, n);
+   printStatistics_m(processes, n, cpuCount);
 }

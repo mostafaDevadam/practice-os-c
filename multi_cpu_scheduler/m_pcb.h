@@ -17,7 +17,7 @@ typedef struct {
 
   
 
-   //int start_time;
+   int startTime;
 
    int completionTime;
    int turnaroundTime;
