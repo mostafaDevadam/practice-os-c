@@ -664,6 +664,7 @@ void run_file_system_4()
 {
 
     fs_format("disk.img");
+    fs_mount("disk.img");
 
     fs_create("hello.txt");
 

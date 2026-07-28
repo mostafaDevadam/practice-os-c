@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "directory.h"
-#include "disk.h"
+//#include "disk.h"
 #include "bitmap.h"
 #include "inode.h"
+#include "cache.h"
 
 #define ENTRIES_PER_BLOCK (BLOCK_SIZE / sizeof(DirectoryEntry))
 
@@ -50,9 +51,9 @@ int directory_init(void)
         entries[i].name[0] = '\0';
     }
 
-    if (disk_write(block, entries) != 0)
+    if (cache_write(block, entries) != 0)
     {
-        printf("disk_write failed\n");
+        printf("cache_write failed\n");
         return -1;
     }
 
@@ -79,7 +80,7 @@ int directory_add(uint32_t dir_inode, const char *name, uint32_t inode_number)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(dir.direct[0], buffer) != 0)
+    if (cache_read(dir.direct[0], buffer) != 0)
         return -1;
 
     DirectoryEntry *entries = (DirectoryEntry *)buffer;
@@ -95,7 +96,7 @@ int directory_add(uint32_t dir_inode, const char *name, uint32_t inode_number)
 
             entries[i].inode = inode_number;
 
-            if (disk_write(dir.direct[0], buffer) != 0)
+            if (cache_write(dir.direct[0], buffer) != 0)
             {
                 return -1;
             }
@@ -123,7 +124,7 @@ int directory_remove(uint32_t dir_inode, const char *name)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(dir.direct[0], buffer) != 0)
+    if (cache_read(dir.direct[0], buffer) != 0)
         return -1;
 
     DirectoryEntry *entries = (DirectoryEntry *)buffer;
@@ -138,7 +139,7 @@ int directory_remove(uint32_t dir_inode, const char *name)
             entries[i].inode = INVALID_INODE;
             memset(entries[i].name, 0, MAX_FILENAME);
 
-            if (disk_write(dir.direct[0], buffer) != 0)
+            if (cache_write(dir.direct[0], buffer) != 0)
                 return -1;
 
             if (dir.size > 0)
@@ -162,7 +163,7 @@ int directory_find(uint32_t dir_inode, const char *name)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(dir.direct[0], buffer) != 0)
+    if (cache_read(dir.direct[0], buffer) != 0)
         return -1;
 
     DirectoryEntry *entries = (DirectoryEntry *)buffer;
@@ -190,7 +191,7 @@ int directory_list(uint32_t dir_inode)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(dir.direct[0], buffer) != 0)
+    if (cache_read(dir.direct[0], buffer) != 0)
         return -1;
 
     DirectoryEntry *entries = (DirectoryEntry *)buffer;

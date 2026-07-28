@@ -3,8 +3,9 @@
 #include "inode.h"
 #include "directory.h"
 #include "bitmap.h"
-#include "disk.h"
+//#include "disk.h"
 #include <time.h>
+#include "cache.h"
 
 static FileDescriptor fd_table[MAX_OPEN_FILES];
 
@@ -94,15 +95,15 @@ int file_read(int fd, void *buffer, uint32_t size)
     if (inode.direct[0] == 0)
         return 0;
 
-    char disk_buffer[BLOCK_SIZE];
+    char buffer[BLOCK_SIZE];
 
-    if(disk_read(inode.direct[0], disk_buffer) != 0)
+    if(cache_read(inode.direct[0], buffer) != 0)
       return -1;
 
     if(size > inode.size)
       size = inode.size;
 
-    memcpy(buffer, disk_buffer, size);
+    memcpy(buffer, buffer, size);
     
     fd_table[fd].offset += size;
 
@@ -136,16 +137,16 @@ int file_write(int fd, const void *buffer, uint32_t size)
             inode.direct[0] = block;
        }
 
-       char disk_buffer[BLOCK_SIZE];
+       char buffer[BLOCK_SIZE];
 
-       memset(disk_buffer, 0, BLOCK_SIZE);
+       memset(buffer, 0, BLOCK_SIZE);
 
        if(size > BLOCK_SIZE)
          size = BLOCK_SIZE;
 
-       memcpy(disk_buffer, buffer, size);
+       memcpy(buffer, buffer, size);
        
-       if(disk_write(inode.direct[0], disk_buffer) != 0){
+       if(cache_write(inode.direct[0], buffer) != 0){
             return -1;
        }
          

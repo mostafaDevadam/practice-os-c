@@ -1,8 +1,8 @@
 #include <string.h>
-#include "disk.h"
+//#include "disk.h"
 #include "bitmap.h"
 #include "superblock.h"
-
+#include "cache.h"
 
 static uint8_t block_bitmap[MAX_BLOCKS];
 static uint8_t inode_bitmap[MAX_INODES];
@@ -14,14 +14,14 @@ int bitmap_save(void)
     memset(buffer, 0, BLOCK_SIZE);
     memcpy(buffer, block_bitmap, sizeof(block_bitmap));
 
-    if(disk_write(sb.block_bitmap, buffer) != 0){
+    if(cache_write(sb.block_bitmap, buffer) != 0){
         return -1;
     }
 
     memset(buffer, 0, BLOCK_SIZE);
     memcpy(buffer, inode_bitmap, sizeof(inode_bitmap));
 
-    return disk_write(sb.inode_bitmap, buffer);
+    return cache_write(sb.inode_bitmap, buffer);
 }
 
 int allocate_block(void)
@@ -102,13 +102,13 @@ int bitmap_load(void)
 
     char buffer[BLOCK_SIZE];
 
-    if(disk_read(sb.block_bitmap, buffer) != 0){
+    if(cache_read(sb.block_bitmap, buffer) != 0){
         return -1;
     }
 
     memcpy(block_bitmap, buffer, sizeof(block_bitmap));
 
-    if(disk_read(sb.inode_bitmap, buffer) != 0){
+    if(cache_read(sb.inode_bitmap, buffer) != 0){
         return -1;
     }
 

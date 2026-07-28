@@ -4,7 +4,10 @@
 #include "inode.h"
 #include "bitmap.h"
 #include "superblock.h"
-#include "disk.h"
+//#include "disk.h"
+#include "cache.h"
+
+
 
 #define INODES_PER_BLOCK (BLOCK_SIZE / sizeof(Inode))
 
@@ -16,7 +19,7 @@ int inode_init(void)
 
     for (uint32_t i = 0; i < sb.inode_table_blocks; i++)
     {
-        disk_write(sb.inode_table_start + i, buffer);
+        cache_write(sb.inode_table_start + i, buffer);
     }
 
     return 0;
@@ -43,13 +46,13 @@ int inode_read(uint32_t inode_number, Inode *inode)
 
     char buffer[BLOCK_SIZE];
 
-    int ret = disk_read(block, buffer);
+    int ret = cache_read(block, buffer);
 
-    printf("disk_read returned %d\n", ret);
+    printf("cache_read returned %d\n", ret);
 
     if (ret != 0)
     {
-        printf("FAILED: disk_read\n");
+        printf("FAILED: cache_read\n");
         return -1;
     }
 
@@ -76,14 +79,14 @@ int inode_write(uint32_t inode_number, Inode *inode)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(block, buffer) != 0)
+    if (cache_read(block, buffer) != 0)
     {
         return -1;
     }
 
     memcpy(((Inode *)buffer) + index, inode, sizeof(Inode));
 
-    return disk_write(block, buffer);
+    return cache_write(block, buffer);
 }
 
 int inode_create(uint32_t type)

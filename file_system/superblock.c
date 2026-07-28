@@ -1,5 +1,6 @@
 #include <string.h>
-#include "disk.h"
+//#include "disk.h"
+#include "cache.h"
 #include "superblock.h"
 #include <stdio.h>
 
@@ -17,7 +18,8 @@ int superblock_save(void)
     printf("magic = %X\n", sb.magic);
     printf("total_inodes = %u\n", sb.total_inodes);
 
-    return disk_write(1, buffer);
+    //return disk_write(1, buffer);
+    return cache_write(1, buffer);
 }
 
 int superblock_load(void)
@@ -25,7 +27,7 @@ int superblock_load(void)
 
     char buffer[BLOCK_SIZE];
 
-    if (disk_read(1, buffer) != 0)
+    if (cache_read(1, buffer) != 0)
         return -1;
 
     memcpy(&sb, buffer, sizeof(SuperBlock));
