@@ -33,6 +33,8 @@
 #include "file_system/bitmap.h"
 #include "file_system/inode.h"
 #include "file_system/directory.h"
+#include "file_system/file.h"
+#include "file_system/fs.h"
 
 void initMemorySystem()
 {
@@ -612,12 +614,12 @@ void run_file_system_2()
     disk_create("disk.img");
     disk_open("disk.img");
 
-    superblock_format();      // initialize sb
-    superblock_load();        // load sb from disk
+    superblock_format(); // initialize sb
+    superblock_load();   // load sb from disk
 
-    bitmap_init();            // initialize bitmaps
+    bitmap_init(); // initialize bitmaps
 
-    inode_init();             // initialize inode table
+    inode_init(); // initialize inode table
 
     int root = directory_init();
 
@@ -630,11 +632,74 @@ void run_file_system_2()
     disk_close();
 }
 
+void run_file_system_3()
+{
+
+    file_init();
+
+    file_create("hello.txt");
+
+    int fd = file_open("hello.txt");
+
+    char msg[] = "HEllo File System!";
+
+    file_write(fd, msg, strlen(msg));
+
+    file_close(fd);
+
+    fd = file_open("hello.txt");
+
+    char buffer[128];
+
+    memset(buffer, 0, sizeof(buffer));
+
+    file_read(fd, buffer, sizeof(buffer));
+
+    printf("Buffer: %s\n", buffer);
+
+    file_close(fd);
+}
+
+void run_file_system_4()
+{
+
+    fs_format("disk.img");
+
+    fs_create("hello.txt");
+
+    int fd = fs_open("hello.txt");
+
+    char text[] = "Hello File System!";
+
+    fs_write(fd, text, sizeof(text));
+
+    fs_close(fd);
+
+    fd = fs_open("hello.txt");
+
+    char buffer[128] = {0};
+
+    fs_read(fd, buffer, sizeof(buffer));
+
+    printf("Buffer: %s\n", buffer);
+
+    fs_close(fd);
+
+    fs_list();
+
+    fs_unmount();
+
+
+
+
+}
+
 int main()
 {
     printf("Hello, World!\n");
 
-    run_file_system_2();
+     //run_file_system_3();
+     run_file_system_4();
 
     return 0;
 }
