@@ -47,9 +47,11 @@ int fs_mount(const char *disk_name)
 {
 
   if (disk_open(disk_name) != 0)
+  {
     return -1;
+  }
 
-    if (cache_init() != 0)
+  if (cache_init() != 0)
     return -1;
 
   if (superblock_load() != 0)
@@ -67,12 +69,11 @@ int fs_mount(const char *disk_name)
 int fs_unmount(void)
 {
 
-  if(superblock_save() != 0)
-     return -1;
-
-  if(bitmap_save() != 0)
+  if (superblock_save() != 0)
     return -1;
 
+  if (bitmap_save() != 0)
+    return -1;
 
   cache_flush();
 

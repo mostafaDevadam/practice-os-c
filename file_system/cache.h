@@ -3,6 +3,7 @@
  #define CACHE_H
 
  #include <stdint.h>
+#include "disk.h"
 
  #define CACHE_SIZE 64
 
@@ -20,7 +21,7 @@
 
  int cache_read(uint32_t block, void *buffer);
 
- int cache_write(uint32_t block, const char *buffer);
+ int cache_write(uint32_t block, const void *buffer);
 
  void cache_flush(void);
 

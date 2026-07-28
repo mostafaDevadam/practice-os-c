@@ -95,15 +95,15 @@ int file_read(int fd, void *buffer, uint32_t size)
     if (inode.direct[0] == 0)
         return 0;
 
-    char buffer[BLOCK_SIZE];
+    char cache_buffer[BLOCK_SIZE];
 
-    if(cache_read(inode.direct[0], buffer) != 0)
+    if(cache_read(inode.direct[0], cache_buffer) != 0)
       return -1;
 
     if(size > inode.size)
       size = inode.size;
 
-    memcpy(buffer, buffer, size);
+    memcpy(buffer, cache_buffer, size);
     
     fd_table[fd].offset += size;
 
@@ -137,16 +137,16 @@ int file_write(int fd, const void *buffer, uint32_t size)
             inode.direct[0] = block;
        }
 
-       char buffer[BLOCK_SIZE];
+       char cache_buffer[BLOCK_SIZE];
 
-       memset(buffer, 0, BLOCK_SIZE);
+       memset(cache_buffer, 0, BLOCK_SIZE);
 
        if(size > BLOCK_SIZE)
          size = BLOCK_SIZE;
 
-       memcpy(buffer, buffer, size);
+       memcpy(cache_buffer, buffer, size);
        
-       if(cache_write(inode.direct[0], buffer) != 0){
+       if(cache_write(inode.direct[0], cache_buffer) != 0){
             return -1;
        }
          

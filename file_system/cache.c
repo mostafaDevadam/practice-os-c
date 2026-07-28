@@ -7,9 +7,9 @@ static CacheEntry cache[CACHE_SIZE];
 
 static uint32_t counter = 0;
 
-static int_cache_find(uint32_t block){
+static int cache_find(uint32_t block){
     for(int i = 0; i < CACHE_SIZE; i++){
-        if(cahce[i].valid && cache[i].block == block){
+        if(cache[i].valid && cache[i].block == block){
             return i;
         }
     }
@@ -25,7 +25,7 @@ static int cache_free(void){
     return -1;
 }
 
-static int cahe_victim(void){
+static int cache_victim(void){
     int victim = 0;
 
     for (int i = 1; i < CACHE_SIZE; i++)
@@ -89,7 +89,7 @@ int cache_read(uint32_t block, void *buffer)
 
 }
 
-int cache_write(uint32_t block, const char *buffer)
+int cache_write(uint32_t block, const void *buffer)
 {
     counter++;
 
@@ -111,7 +111,7 @@ int cache_write(uint32_t block, const char *buffer)
            
     }
 
-    memccpy(cache[index].data, buffer, BLOCK_SIZE);
+    memcpy(cache[index].data, buffer, BLOCK_SIZE);
 
     cache[index].dirty = 1;
     cache[index].age = counter;

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "directory.h"
-//#include "disk.h"
+#include "disk.h"
 #include "bitmap.h"
 #include "inode.h"
 #include "cache.h"
