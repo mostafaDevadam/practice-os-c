@@ -34,7 +34,6 @@
 #include "file_system/inode.h"
 #include "file_system/directory.h"
 
-
 void initMemorySystem()
 {
     generateBackingStore();
@@ -559,21 +558,14 @@ void run_file_system()
     directory_add(0, "hello.txt", file);
     directory_list(0);
 
-     printf("\n----------Directory-----------------\n");
+    printf("\n----------Directory-----------------\n");
 
-     printf("\nSearch result: inode %d\n", directory_find(0, "hello.txt"));
+    printf("\nSearch result: inode %d\n", directory_find(0, "hello.txt"));
 
-     directory_remove(0, "hello.txt");
+    directory_remove(0, "hello.txt");
 
     printf("\nAfter Directory deletion: \n");
-     directory_list(0);
-
-    
-
-    
-
-
-
+    directory_list(0);
 
     printf("\n----------iNode-----------------\n");
 
@@ -581,27 +573,25 @@ void run_file_system()
     printf("Type: %d\n", inode.type);
     printf("Links: %d\n", inode.links);
     printf("Size: %d\n", inode.size);
-    //printf("Created: %s\n", ctime(&inode.created));
-    //printf("Modified: %s\n", ctime(&inode.modified));
-
-
+    // printf("Created: %s\n", ctime(&inode.created));
+    // printf("Modified: %s\n", ctime(&inode.modified));
 
     printf("\n----------Bitmap-----------------\n");
 
-   /* printf("Allocated Block: %d\n", block);
-    printf("Allcoated Inode : %d\n", inode_b);
+    /* printf("Allocated Block: %d\n", block);
+     printf("Allcoated Inode : %d\n", inode_b);
 
-    printf("Free Blocks : %u\n", sb.free_blocks);
-    printf("Free Inodes : %u\n", sb.free_inodes);
+     printf("Free Blocks : %u\n", sb.free_blocks);
+     printf("Free Inodes : %u\n", sb.free_inodes);
 
 
 
-    free_block(block);
-    free_inode(inode_b);
+     free_block(block);
+     free_inode(inode_b);
 
-    printf("\nafter Free:\n");
-    printf("Free Blocks: %u\n", sb.free_blocks);
-    printf("Free Inodes: %u\n", sb.free_inodes);*/
+     printf("\nafter Free:\n");
+     printf("Free Blocks: %u\n", sb.free_blocks);
+     printf("Free Inodes: %u\n", sb.free_inodes);*/
 
     printf("\n------------Disk---------------\n");
 
@@ -612,11 +602,30 @@ void run_file_system()
 
     //
 
-    
-
     inode_delete(id);
 
-    
+    disk_close();
+}
+
+void run_file_system_2()
+{
+    disk_create("disk.img");
+    disk_open("disk.img");
+
+    superblock_format();      // initialize sb
+    superblock_load();        // load sb from disk
+
+    bitmap_init();            // initialize bitmaps
+
+    inode_init();             // initialize inode table
+
+    int root = directory_init();
+
+    int file = inode_create(INODE_FILE);
+
+    directory_add(root, "hello.txt", file);
+
+    directory_list(root);
 
     disk_close();
 }
@@ -625,7 +634,7 @@ int main()
 {
     printf("Hello, World!\n");
 
-    run_file_system();
+    run_file_system_2();
 
     return 0;
 }

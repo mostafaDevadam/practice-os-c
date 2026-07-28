@@ -1,83 +1,98 @@
- #include <string.h>
- #include <time.h>
- #include "inode.h"
- #include "bitmap.h"
- #include "superblock.h"
- #include "disk.h"
- 
- #define INODES_PER_BLOCK (BLOCK_SIZE / sizeof(Inode))
+#include <string.h>
+#include <stdio.h>
+#include <time.h>
+#include "inode.h"
+#include "bitmap.h"
+#include "superblock.h"
+#include "disk.h"
 
+#define INODES_PER_BLOCK (BLOCK_SIZE / sizeof(Inode))
 
- int inode_init(void){
-     char buffer[BLOCK_SIZE];
+int inode_init(void)
+{
+    char buffer[BLOCK_SIZE];
 
-     memset(buffer, 0, BLOCK_SIZE);
+    memset(buffer, 0, BLOCK_SIZE);
 
-     for(uint32_t i =0; i < sb.inode_table_blocks; i++){
+    for (uint32_t i = 0; i < sb.inode_table_blocks; i++)
+    {
         disk_write(sb.inode_table_start + i, buffer);
-     }
+    }
 
-     return 0;
-
- }
-
+    return 0;
+}
 
 
- int inode_read(uint32_t inode_number, Inode *inode){
 
-    if(inode_number >= sb.total_inodes){
+int inode_read(uint32_t inode_number, Inode *inode)
+{
+    printf("inode_number = %u\n", inode_number);
+    printf("total_inodes = %u\n", sb.total_inodes);
+
+    if (inode_number >= sb.total_inodes)
+    {
+        printf("FAILED: inode_number >= total_inodes\n");
         return -1;
     }
 
     uint32_t block = sb.inode_table_start + (inode_number / INODES_PER_BLOCK);
     uint32_t index = inode_number % INODES_PER_BLOCK;
 
+    printf("block = %u\n", block);
+    printf("index = %u\n", index);
+
     char buffer[BLOCK_SIZE];
 
-    if(disk_read(block, buffer) != 0){
+    int ret = disk_read(block, buffer);
+
+    printf("disk_read returned %d\n", ret);
+
+    if (ret != 0)
+    {
+        printf("FAILED: disk_read\n");
         return -1;
     }
 
-    memcpy(inode, ((Inode *)buffer)  + index, sizeof(Inode));
+    memcpy(inode, ((Inode *)buffer) + index, sizeof(Inode));
+
+    printf("inode.id = %u\n", inode->id);
 
     return 0;
+}
 
 
- }
 
 
+int inode_write(uint32_t inode_number, Inode *inode)
+{
 
- int inode_write(uint32_t inode_number, Inode *inode){
-
-    if(inode_number >= sb.total_inodes){
+    if (inode_number >= sb.total_inodes)
+    {
         return -1;
     }
-    
+
     uint32_t block = sb.inode_table_start + inode_number / INODES_PER_BLOCK;
     uint32_t index = inode_number % INODES_PER_BLOCK;
 
     char buffer[BLOCK_SIZE];
 
-    if(disk_read(block, buffer) != 0){
+    if (disk_read(block, buffer) != 0)
+    {
         return -1;
     }
 
     memcpy(((Inode *)buffer) + index, inode, sizeof(Inode));
 
     return disk_write(block, buffer);
+}
 
-
-
-
- }
-
-
-
- int inode_create(uint32_t type){
+int inode_create(uint32_t type)
+{
 
     int number = allocate_inode();
 
-    if(number < 0){
+    if (number < 0)
+    {
         return -1;
     }
 
@@ -95,28 +110,28 @@
     inode_write(number, &inode);
 
     return number;
+}
 
-
-
- }
-
-
-
- int inode_delete(uint32_t inode_number){
+int inode_delete(uint32_t inode_number)
+{
 
     Inode inode;
 
-    if(inode_read(inode_number, &inode) != 0){
+    if (inode_read(inode_number, &inode) != 0)
+    {
         return -1;
     }
 
-    for(int i = 0; i < DIRECT_POINTERS; i++){
-        if(inode.direct[i] != 0){
+    for (int i = 0; i < DIRECT_POINTERS; i++)
+    {
+        if (inode.direct[i] != 0)
+        {
             free_block(inode.direct[i]);
         }
     }
 
-    if(inode.indirect != 0){
+    if (inode.indirect != 0)
+    {
         free_block(inode.indirect);
     }
 
@@ -127,7 +142,4 @@
     inode_write(inode_number, &inode);
 
     return 0;
-
-
- }
-
+}
