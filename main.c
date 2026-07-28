@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "src/shell.h"
 #include "scheduler/pcb.h"
 #include "scheduler/fcfs.h"
@@ -26,6 +28,12 @@
 #include "multi_cpu_scheduler/m_cpu.h"
 #include "multi_cpu_scheduler/m_utils.h"
 #include "multi_cpu_scheduler/m_input.h"
+#include "file_system/disk.h"
+#include "file_system/superblock.h"
+#include "file_system/bitmap.h"
+#include "file_system/inode.h"
+#include "file_system/directory.h"
+
 
 void initMemorySystem()
 {
@@ -445,11 +453,11 @@ void run_multi_cpu_scheduler()
 
     printf("run_multi_cpu_scheduler\n");
 
-    //int n = 5;
+    // int n = 5;
 
     /*M_PCB processes[5] =
         {
-        
+
             {1, 0, 5, 5, 2, 0, 0, 0, -1, READY, -1},
             {2, 1, 3, 3, 1, 0, 0, 0, -1, READY, -1},
             {3, 2, 8, 8, 3, 0, 0, 0, -1, READY, -1},
@@ -461,21 +469,21 @@ void run_multi_cpu_scheduler()
     int cpuCount;
     int n = loadProcesses("multi_cpu_scheduler/processes.txt", processes, &cpuCount);
 
-    if(n == -1){
+    if (n == -1)
+    {
         return;
     }
 
     CPU cpus[MAX_CPU];
 
     initializeCPUs(cpus, cpuCount);
-    //schedule(processes, n, cpus, cpuCount);
+    // schedule(processes, n, cpus, cpuCount);
 
     printf("processes = %p\n", (void *)processes);
     printf("n = %d\n", n);
     printf("cpuCount = %d\n", cpuCount);
 
-
-    //schedule_fcfs(processes, n, cpus, cpuCount);
+    // schedule_fcfs(processes, n, cpus, cpuCount);
 
     schedule_all(processes, n, cpus, cpuCount);
 
@@ -489,11 +497,135 @@ void run_multi_cpu_scheduler()
     }
 }
 
+void run_file_system()
+{
+
+    if (disk_create("disk.img") != 0)
+    {
+        printf("Failed to create disk\n");
+        return;
+    }
+
+    if (disk_open("disk.img") != 0)
+    {
+        printf("Failed to open disk\n");
+        return;
+    }
+
+    /*char buffer[BLOCK_SIZE];
+
+    memset(buffer, 0, BLOCK_SIZE);
+    strcpy(buffer, "Hello File System!");
+
+    disk_write(5, buffer);
+
+    // clear ram buffer
+    memset(buffer, 0, BLOCK_SIZE);
+
+    disk_read(5, buffer);
+
+    printf("disk buffer: %s\n", buffer);*/
+
+    if (superblock_format() != 0)
+    {
+        printf("Format failed\n");
+        return;
+    }
+
+    if (superblock_load() != 0)
+    {
+        printf("Load failed\n");
+        return;
+    }
+
+    bitmap_init();
+    /*bitmap_load();
+
+    int block = allocate_block();
+    int inode_b = allocate_inode();*/
+
+    inode_init();
+
+    int id = inode_create(INODE_FILE);
+
+    Inode inode;
+
+    inode_read(id, &inode);
+
+    //
+
+    directory_init();
+    int file = inode_create(INODE_FILE);
+    directory_add(0, "hello.txt", file);
+    directory_list(0);
+
+     printf("\n----------Directory-----------------\n");
+
+     printf("\nSearch result: inode %d\n", directory_find(0, "hello.txt"));
+
+     directory_remove(0, "hello.txt");
+
+    printf("\nAfter Directory deletion: \n");
+     directory_list(0);
+
+    
+
+    
+
+
+
+
+    printf("\n----------iNode-----------------\n");
+
+    printf("ID: %d\n", inode.id);
+    printf("Type: %d\n", inode.type);
+    printf("Links: %d\n", inode.links);
+    printf("Size: %d\n", inode.size);
+    //printf("Created: %s\n", ctime(&inode.created));
+    //printf("Modified: %s\n", ctime(&inode.modified));
+
+
+
+    printf("\n----------Bitmap-----------------\n");
+
+   /* printf("Allocated Block: %d\n", block);
+    printf("Allcoated Inode : %d\n", inode_b);
+
+    printf("Free Blocks : %u\n", sb.free_blocks);
+    printf("Free Inodes : %u\n", sb.free_inodes);
+
+
+
+    free_block(block);
+    free_inode(inode_b);
+
+    printf("\nafter Free:\n");
+    printf("Free Blocks: %u\n", sb.free_blocks);
+    printf("Free Inodes: %u\n", sb.free_inodes);*/
+
+    printf("\n------------Disk---------------\n");
+
+    printf("Magic : %X\n", sb.magic);
+    printf("Block Size : %u\n", sb.block_size);
+    printf("Total Blocks : %u\n", sb.total_blocks);
+    printf("Data Starts : %u\n", sb.data_block_start);
+
+    //
+
+    
+
+    inode_delete(id);
+
+    
+
+    disk_close();
+}
+
 int main()
 {
     printf("Hello, World!\n");
 
-    run_multi_cpu_scheduler();
+    run_file_system();
 
     return 0;
 }

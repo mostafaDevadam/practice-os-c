@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "shell.h"
 
-
+/*
 void startMemoryManagement() {
     printf("Starting memory management...\n");
 }
@@ -42,13 +42,13 @@ void shell_concurrency() {
 void shell_multi_cpu_scheduler() {
     
 }
-
+*/
 void startShell() {
     printf("Starting shell...\n");
 
-    int main_choice, memory_choice, cpu_choice, scheduler_choice, deadlock_choice, concurrency_choice, exit = 0;
+   // int main_choice, memory_choice, cpu_choice, scheduler_choice, deadlock_choice, concurrency_choice, exit = 0;
 
-    while (!exit) {
+    /*while (!exit) {
         printf("Main Menu:\n");
         printf("1. Memory Management\n");
         printf("2. CPU Scheduler\n");
@@ -83,5 +83,5 @@ void startShell() {
                 printf("Invalid choice. Please try again.\n");
                 break;
         }
-    }
+    }*/
 }

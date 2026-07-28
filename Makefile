@@ -8,6 +8,7 @@ MEMORY = memory
 CONCURRENCY = concurrency
 DEADLOCK = deadlock
 MULTI_CPU_SCHEDULER = multi_cpu_scheduler
+FILE_SYSTEM = file_system
 
 # Target executable name
 TARGET = $(BUILD_DIR)/main
@@ -22,7 +23,8 @@ $(BUILD_DIR)/dining_philosophers.o \
 $(BUILD_DIR)/banker.o $(BUILD_DIR)/utils_d.o $(BUILD_DIR)/avoidance.o $(BUILD_DIR)/detection.o $(BUILD_DIR)/display.o $(BUILD_DIR)/input.o $(BUILD_DIR)/prevention.o \
 $(BUILD_DIR)/m_pcb.o $(BUILD_DIR)/m_cpu.o $(BUILD_DIR)/m_scheduler.o $(BUILD_DIR)/m_utils.o $(BUILD_DIR)/m_input.o $(BUILD_DIR)/m_queue.o \
 $(BUILD_DIR)/m_fcfs.o $(BUILD_DIR)/m_sjf.o  $(BUILD_DIR)/m_round_robin.o $(BUILD_DIR)/m_priority.o $(BUILD_DIR)/m_gantt.o \
-$(BUILD_DIR)/m_statistics.o
+$(BUILD_DIR)/m_statistics.o \
+$(BUILD_DIR)/disk.o $(BUILD_DIR)/superblock.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/inode.o $(BUILD_DIR)/directory.o
 # Default target to build the project
 all: $(BUILD_DIR) $(TARGET)
 
@@ -39,7 +41,8 @@ $(DEADLOCK)/banker.h $(DEADLOCK)/utils_d.h $(DEADLOCK)/avoidance.h $(DEADLOCK)/d
 $(MULTI_CPU_SCHEDULER)/m_pcb.h $(MULTI_CPU_SCHEDULER)/m_cpu.h $(MULTI_CPU_SCHEDULER)/m_scheduler.h $(MULTI_CPU_SCHEDULER)/m_utils.h \
 $(MULTI_CPU_SCHEDULER)/m_input.h $(MULTI_CPU_SCHEDULER)/m_queue.h $(MULTI_CPU_SCHEDULER)/m_fcfs.h $(MULTI_CPU_SCHEDULER)/m_sjf.h \
 $(MULTI_CPU_SCHEDULER)/m_round_robin.h $(MULTI_CPU_SCHEDULER)/m_priority.h $(MULTI_CPU_SCHEDULER)/m_gantt.h \
-$(MULTI_CPU_SCHEDULER)/m_statistics.h
+$(MULTI_CPU_SCHEDULER)/m_statistics.h \
+$(FILE_SYSTEM)/disk.h $(FILE_SYSTEM)/superblock.h $(FILE_SYSTEM)/bitmap.h $(FILE_SYSTEM)/inode.h $(FILE_SYSTEM)/directory.h
 	$(CC) $(CFLAGS) -c main.c -o $(BUILD_DIR)/main.o 
 
 # Compile ic.c (depends on ic.h)
@@ -183,6 +186,30 @@ $(BUILD_DIR)/m_gantt.o: $(MULTI_CPU_SCHEDULER)/m_gantt.c $(MULTI_CPU_SCHEDULER)/
 $(BUILD_DIR)/m_statistics.o: $(MULTI_CPU_SCHEDULER)/m_statistics.c $(MULTI_CPU_SCHEDULER)/m_statistics.h $(MULTI_CPU_SCHEDULER)/m_pcb.h
 	$(CC) $(CFLAGS) -c $(MULTI_CPU_SCHEDULER)/m_statistics.c -o $(BUILD_DIR)/m_statistics.o
 
+
+# file_system : FILE_SYSTEM
+
+$(BUILD_DIR)/disk.o: $(FILE_SYSTEM)/disk.c $(FILE_SYSTEM)/disk.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/disk.c -o $(BUILD_DIR)/disk.o
+
+$(BUILD_DIR)/superblock.o: $(FILE_SYSTEM)/superblock.c $(FILE_SYSTEM)/superblock.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/superblock.c -o $(BUILD_DIR)/superblock.o
+
+$(BUILD_DIR)/bitmap.o: $(FILE_SYSTEM)/bitmap.c $(FILE_SYSTEM)/bitmap.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/bitmap.c -o $(BUILD_DIR)/bitmap.o
+
+$(BUILD_DIR)/inode.o: $(FILE_SYSTEM)/inode.c $(FILE_SYSTEM)/inode.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/inode.c -o $(BUILD_DIR)/inode.o
+
+$(BUILD_DIR)/directory.o: $(FILE_SYSTEM)/directory.c $(FILE_SYSTEM)/directory.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/directory.c -o $(BUILD_DIR)/directory.o
+
+
+
+
+
+
+	
 
 #
 run: $(TARGET)

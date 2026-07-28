@@ -8,8 +8,11 @@ PageTableEntry page_table[NUMBER_OF_PAGES];
 void initPageTable(void) {
     int i;
     for (i = 0; i < NUMBER_OF_PAGES; i++) {
-        page_table[i].frame = -1;
-        page_table[i].valid = 0;
+        //page_table[i].frame = -1;
+        //page_table[i].valid = 0;
+
+        pageTable[i].frame = -1;
+        pageTable[i].valid = 0;
     }
 }
 
