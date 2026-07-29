@@ -15,11 +15,12 @@ typedef struct {
 
 int file_init(void);
 
-int file_create(const char *name);
+int file_create(uint32_t parent_inode,const char *name);
 
-int file_delete(const char *name);
+int file_delete(uint32_t parent_inode, const char *name);
 
-int file_open(const char *name);
+//int file_open(const char *name);
+int file_open(uint32_t inode_number);
 
 int file_close(int fd);
 

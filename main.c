@@ -634,7 +634,7 @@ void run_file_system_2()
 
 void run_file_system_3()
 {
-
+   /*
     file_init();
 
     file_create("hello.txt");
@@ -658,17 +658,33 @@ void run_file_system_3()
     printf("Buffer: %s\n", buffer);
 
     file_close(fd);
+    */
 }
 
 void run_file_system_4()
 {
 
-    fs_format("disk.img");
-    fs_mount("disk.img");
+    if(fs_format("disk.img") != 0){
+        return;
+    }
+    
+    if(fs_mount("disk.img") != 0){
+        return;
+    }
 
-    fs_create("hello.txt");
+    if(fs_create("/hello.txt") < 0){
+        printf("Create failed\n");
+        return;
+    }
 
-    int fd = fs_open("hello.txt");
+   
+
+    int fd = fs_open("/hello.txt");
+
+    if(fd < 0){
+        printf("Open failed\n");
+        return;
+    }
 
     char text[] = "Hello File System!";
 
@@ -676,7 +692,12 @@ void run_file_system_4()
 
     fs_close(fd);
 
-    fd = fs_open("hello.txt");
+    fd = fs_open("/hello.txt");
+
+    if(fd < 0){
+        printf("Open failed\n");
+        return;
+    }
 
     char buffer[128] = {0};
 
@@ -686,11 +707,11 @@ void run_file_system_4()
 
     fs_close(fd);
 
-    fs_list();
+    printf("\nDirectory Listing:\n");
+
+    fs_list("/");
 
     fs_unmount();
-
-
 
 
 }

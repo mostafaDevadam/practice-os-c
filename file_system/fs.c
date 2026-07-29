@@ -7,6 +7,8 @@
 #include "directory.h"
 #include "file.h"
 #include "cache.h"
+#include "path.h"
+
 
 int fs_format(const char *disk_name)
 {
@@ -82,20 +84,43 @@ int fs_unmount(void)
   return 0;
 }
 
-int fs_create(const char *name)
+int fs_create(const char *path)
 {
+  uint32_t parent;
+  char name[MAX_FILENAME];
 
-  return file_create(name);
+  if(path_parent(path, &parent, name) != 0){
+    return -1;
+  }
+     
+  printf("#parent  = %u\n", parent);
+  printf("#name = %s\n", name);
+
+   if (file_create(parent, name) < 0)
+        return -1;
+
+ 
+
+  return 0;
 }
 
-int fs_delete(const char *name)
+int fs_delete(const char *path)
 {
-  return file_delete(name);
+  uint32_t parent;
+  char filename[MAX_FILENAME];
+
+  if(path_parent(path, &parent, filename) != 0) return -1;
+
+  return file_delete(parent, filename);
 }
 
-int fs_open(const char *name)
+int fs_open(const char *path)
 {
-  return file_open(name);
+  int inode = path_lookup(path);
+
+  if(inode < 0) return -1;
+
+  return file_open(inode);
 }
 
 int fs_close(int fd)
@@ -113,7 +138,10 @@ int fs_write(int fd, const void *buffer, unsigned size)
   return file_write(fd, buffer, size);
 }
 
-int fs_list(void)
+int fs_list(const char *path)
 {
-  return directory_list(0);
+  int inode = path_lookup(path);
+  if(inode < 0) return -1;
+
+  return directory_list(inode);
 }

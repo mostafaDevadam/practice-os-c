@@ -25,7 +25,7 @@ $(BUILD_DIR)/m_pcb.o $(BUILD_DIR)/m_cpu.o $(BUILD_DIR)/m_scheduler.o $(BUILD_DIR
 $(BUILD_DIR)/m_fcfs.o $(BUILD_DIR)/m_sjf.o  $(BUILD_DIR)/m_round_robin.o $(BUILD_DIR)/m_priority.o $(BUILD_DIR)/m_gantt.o \
 $(BUILD_DIR)/m_statistics.o \
 $(BUILD_DIR)/disk.o $(BUILD_DIR)/superblock.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/inode.o $(BUILD_DIR)/directory.o \
-$(BUILD_DIR)/file.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/cache.o
+$(BUILD_DIR)/file.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/cache.o $(BUILD_DIR)/path.o
 # Default target to build the project
 all: $(BUILD_DIR) $(TARGET)
 
@@ -44,7 +44,7 @@ $(MULTI_CPU_SCHEDULER)/m_input.h $(MULTI_CPU_SCHEDULER)/m_queue.h $(MULTI_CPU_SC
 $(MULTI_CPU_SCHEDULER)/m_round_robin.h $(MULTI_CPU_SCHEDULER)/m_priority.h $(MULTI_CPU_SCHEDULER)/m_gantt.h \
 $(MULTI_CPU_SCHEDULER)/m_statistics.h \
 $(FILE_SYSTEM)/disk.h $(FILE_SYSTEM)/superblock.h $(FILE_SYSTEM)/bitmap.h $(FILE_SYSTEM)/inode.h $(FILE_SYSTEM)/directory.h \
-$(FILE_SYSTEM)/file.h $(FILE_SYSTEM)/fs.h $(FILE_SYSTEM)/cache.h
+$(FILE_SYSTEM)/file.h $(FILE_SYSTEM)/fs.h $(FILE_SYSTEM)/cache.h $(FILE_SYSTEM)/path.h
 	$(CC) $(CFLAGS) -c main.c -o $(BUILD_DIR)/main.o 
 
 # Compile ic.c (depends on ic.h)
@@ -211,6 +211,9 @@ $(BUILD_DIR)/directory.o: $(FILE_SYSTEM)/directory.c $(FILE_SYSTEM)/directory.h
 
 $(BUILD_DIR)/file.o: $(FILE_SYSTEM)/file.c $(FILE_SYSTEM)/file.h 
 	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/file.c -o $(BUILD_DIR)/file.o
+
+$(BUILD_DIR)/path.o: $(FILE_SYSTEM)/path.c $(FILE_SYSTEM)/path.h 
+	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/path.c -o $(BUILD_DIR)/path.o
 
 $(BUILD_DIR)/fs.o: $(FILE_SYSTEM)/fs.c $(FILE_SYSTEM)/fs.h 
 	$(CC) $(CFLAGS) -c $(FILE_SYSTEM)/fs.c -o $(BUILD_DIR)/fs.o

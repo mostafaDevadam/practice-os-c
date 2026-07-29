@@ -19,6 +19,6 @@ int fs_read(int fd, void *buffer, unsigned size);
 
 int fs_write(int fd, const void *buffer, unsigned size);
 
-int fs_list(void);
+int fs_list(const char *path);
 
 #endif
